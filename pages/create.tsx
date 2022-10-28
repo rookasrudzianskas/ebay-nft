@@ -45,6 +45,7 @@ const Create = ({}: Props) => {
 
         const { listingType, price } = target.elements;
 
+        // create a direct listing
         if( listingType.value === 'directListing') {
             await createDirectListing({
                 // @ts-ignore
@@ -66,6 +67,7 @@ const Create = ({}: Props) => {
             });
         }
 
+        // For auction listings
         if( listingType.value === 'auctionListing') {
             await createAuctionListing({
                 // @ts-ignore
