@@ -77,7 +77,7 @@ const Header = ({}: Props) => {
                 </Link>
             </section>
             <hr/>
-            <section>
+            <section className="flex py-3 space-x-6 text-sm md:text-sm whitespace-nowrap justify-center px-6">
                 <p className="link">Home</p>
                 <p className="link">Electronics</p>
                 <p className="link">Computers</p>
