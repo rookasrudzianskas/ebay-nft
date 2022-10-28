@@ -2,6 +2,7 @@ import React, {FormEvent, useState} from 'react';
 import Header from "../components/Header";
 import {useAddress, useContract} from "@thirdweb-dev/react";
 import {File} from "@babel/types";
+import {useRouter} from "next/router";
 
 type Props = {
 
@@ -10,6 +11,7 @@ type Props = {
 const AddItem = ({}: Props) => {
     const { contract } = useContract(process.env.NEXT_PUBLIC_COLLECTION_CONTRACT, 'nft-collection');
     const address = useAddress();
+    const router = useRouter();
     const [preview, setPreview] = useState<string>();
     const [image, setImage] = useState<File>();
 
@@ -35,6 +37,12 @@ const AddItem = ({}: Props) => {
 
         try {
               const tx = await contract.mintTo(address, metadata);
+              const receipt = tx.receipt; // the transaction receipt
+              const tokenId = tx.id // the ID of the minted token
+              const nft = await tx.data(); // the NFT data
+              // console.log(nft);
+              router.push('/');
+
         } catch (e) {
             console.log(e);
         }
@@ -54,7 +62,7 @@ const AddItem = ({}: Props) => {
                 </p>
 
                 <div className="flex flex-col justify-center md:flex-row md:items-center md:space-x-5 pt-5">
-                    <img className="border h-80 w-80 object-contain" src="https://links.papareact.com/ucj" alt=""/>
+                    <img className="border h-80 w-80 object-contain" src={preview || 'https://links.papareact.com/ucj'} alt=""/>
 
                     <form onSubmit={mintNft} className="flex flex-col flex-1 p-2 space-y-2">
                         <label className="font-light">Name of Item</label>
