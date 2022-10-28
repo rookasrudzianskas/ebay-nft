@@ -60,6 +60,31 @@ const Create = ({}: Props) => {
                     console.log("SUCCESS >>>", data, variables, context);
                     router.push('/');
                 },
+                onError: (error, variables, context) => {
+                    console.log("ERROR >>>", error, variables, context);
+                }
+            });
+        }
+
+        if( listingType.value === 'auctionListing') {
+            await createAuctionListing({
+                // @ts-ignore
+                assetContractAddress: process.env.NEXT_PUBLIC_COLLECTION_CONTRACT, // the address of the NFT contract
+                buyoutPricePerToken: price.value, // the price of the NFT
+                tokenId: selectedNft.metadata.id, // the ID of the NFT
+                startTimestamp: new Date(), // the start time of the listing
+                currencyContractAddress: NATIVE_TOKEN_ADDRESS, // the address of the currency contract
+                listingDurationInSeconds: 60 * 60 * 24 * 7, // the duration of the listing in seconds
+                quantity: 1, // the quantity of the NFT to list
+                reservePricePerToken: 0, // the reserve price of the NFT
+            }, {
+                onSuccess: (data, variables, context) => {
+                    console.log("SUCCESS >>>", data, variables, context);
+                    router.push('/');
+                },
+                onError: (error, variables, context) => {
+                    console.log("ERROR >>>", error, variables, context);
+                }
             });
         }
     }
