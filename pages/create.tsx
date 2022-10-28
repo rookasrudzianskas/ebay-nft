@@ -12,7 +12,6 @@ const Create = ({}: Props) => {
     const address = useAddress();
     const { contract } = useContract(process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT, 'marketplace');
 
-
     return (
         <div>
             <Header />
