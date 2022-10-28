@@ -5,7 +5,7 @@ import Header from "../components/Header";
 
 const Home: NextPage = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="">
       <Head>
         <title>Ebay</title>
         <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5977/5977581.png" />
