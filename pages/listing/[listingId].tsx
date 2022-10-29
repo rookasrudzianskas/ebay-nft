@@ -1,15 +1,15 @@
-//@ts-nocheck
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {useRouter} from "next/router";
 
-const ListingId = () => {
+const ListingId = ({}) => {
+    const router = useRouter();
+    const {listingId} = router.query as { listingId: string };
     return (
-        <View>
-            <Text>
-                byrookas 🚀
-            </Text>
-        </View>
+        <div>
+            <h1>Listing ID: {listingId}</h1>
+        </div>
     );
 };
 
 export default ListingId;
+// by Rokas with ❤️

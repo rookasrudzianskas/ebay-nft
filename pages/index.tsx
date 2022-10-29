@@ -30,7 +30,7 @@ const Home: NextPage = () => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mx-auto">
                     {listings?.map((listing) => (
-                        <Link href={`/listing${listing.id}`}>
+                        <Link href={`/listing/${listing.id}`}>
                             <div className="flex flex-col card hover:scale-105 transition-all duration-150 ease-out cursor-pointer" key={listing.id}>
                                 <div className="flex-1 flex flex-col pb-2 items-center">
                                     <MediaRenderer className="w-44" src={listing.asset.image} />
