@@ -12,7 +12,7 @@ const ListingId = ({}) => {
     if(isLoading) return (
         <div>
             <Header />
-            <div>
+            <div className="text-center animate-pulse text-blue-500">
                 <p>Loading Item...</p>
             </div>
         </div>
@@ -25,10 +25,16 @@ const ListingId = ({}) => {
         <div>
             <Header />
 
-            <main>
-                <div>
+            <main className="max-w-6xl mx-auto p-2 flex-row space-y-10 space-x-5 pr-10">
+                <div className="p-10 border mx-auto lg:mx-0 max-w-md lg:max-w-xl">
                     <MediaRenderer src={listing.asset.image} />
                 </div>
+
+                <section>
+                    <div>
+                        <h1>{listing.asset.name}</h1>
+                    </div>
+                </section>
             </main>
         </div>
     );
