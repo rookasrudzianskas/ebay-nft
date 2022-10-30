@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import Header from "../../components/Header";
 import {MediaRenderer, useContract, useListing} from "@thirdweb-dev/react";
 import {UserCircleIcon} from "@heroicons/react/solid";
 import {ListingType} from "@thirdweb-dev/sdk";
+import Countdown from "react-countdown";
 
 const ListingId = ({}) => {
     const router = useRouter();
@@ -15,6 +16,23 @@ const ListingId = ({}) => {
         symbol: string;
     }>();
 
+    const fetchMinNextBid = async () => {
+        if(!listing || !contract) return;
+
+        const { displayValue, symbol } = await contract.auction.getMinimumNextBid(listingId);
+        setMinimumNextBid({
+            displayValue: displayValue,
+            symbol: symbol
+        });
+    }
+
+    useEffect(() => {
+        if(!listing || !contract || !listingId) return;
+        if(listing.type === ListingType.Auction) {
+            fetchMinNextBid();
+        }
+    }, [listing, listingId, contract]);
+
     const formatPlaceholder = () => {
         if(!listing) return;
         if(listing.type === ListingType.Direct) {
@@ -22,8 +40,7 @@ const ListingId = ({}) => {
         }
 
         if(listing.type === ListingType.Auction) {
-            return 'Enter Bid Amount'
-            // @FIXME import the auction contract and get the current highest bid
+            return Number(minimumNextBid?.displayValue) === 0 ? 'Enter Bid Amount' : `${minimumNextBid?.displayValue} ${minimumNextBid?.symbol} or more`;
         }
     }
 
@@ -79,9 +96,9 @@ const ListingId = ({}) => {
                         {listing.type === ListingType.Auction && (
                             <>
                                 <p>Current Minimum Bid:</p>
-                                <p>...</p>
+                                <p className="font-bold">{minimumNextBid?.displayValue} {minimumNextBid?.symbol}</p>
                                 <p>Time Remaining:</p>
-                                <p>...</p>
+                                <Countdown date={Number(listing.endTimeInEpochSeconds.toString()) * 1000}  />
                             </>
                         )}
 
