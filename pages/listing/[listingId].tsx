@@ -60,7 +60,8 @@ const ListingId = ({}) => {
 
                         <p className="col-span-2 font-bold">{listing.type === ListingType.Direct ? "Make an Offer" : "Bid on this Auction"}</p>
 
-
+                        <input className="border p-2 rounded-lg mr-5 outline-green-500" type="text" placeholder={"Enter value..."}/>
+                        <button className="bg-red-600 font-bold text-white rounded-full w-44 py-4 px-10">{listing.type === ListingType.Direct ? "Offer" : "Bid"}</button>
                     </div>
 
                 </section>
