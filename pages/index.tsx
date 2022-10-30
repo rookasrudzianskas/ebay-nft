@@ -13,7 +13,6 @@ const Home: NextPage = () => {
     const { contract } = useContract(process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT, 'marketplace');
 
     const { data: listings, isLoading: loadingListings } = useActiveListings(contract);
-    // console.log(listings);
     const router = useRouter();
 
   return (
@@ -32,7 +31,7 @@ const Home: NextPage = () => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mx-auto">
                     {listings?.map((listing) => (
-                        <div onClick={() => router.push(`/listing/${listing.id}`)} className="flex flex-col card hover:scale-105 transition-all duration-150 ease-out cursor-pointer" key={listing.id} href={`/listing/${listing.id}`}>
+                        <div onClick={() => router.push(`/listing/${listing.id}`)} className="flex flex-col card hover:scale-105 transition-all duration-150 ease-out cursor-pointer" key={listing.id}>
                             <div className="flex-1 flex flex-col pb-2 items-center">
                                 <MediaRenderer className="w-44" src={listing.asset.image} />
                             </div>
