@@ -1,16 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import Header from "../../components/Header";
-import {MediaRenderer, useContract, useListing} from "@thirdweb-dev/react";
+import {MediaRenderer, useBuyNow, useContract, useListing, useNetwork, useNetworkMismatch} from "@thirdweb-dev/react";
 import {UserCircleIcon} from "@heroicons/react/solid";
 import {ListingType} from "@thirdweb-dev/sdk";
 import Countdown from "react-countdown";
+import network from "../../utils/network";
+import {ethers} from "ethers";
 
 const ListingId = ({}) => {
     const router = useRouter();
     const {listingId} = router.query as { listingId: string };
     const { contract}  = useContract(process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT, 'marketplace');
     const {data: listing, isLoading, error } = useListing(contract, listingId);
+
+    const [, switchNetwork] = useNetwork();
+    const networkMismatch = useNetworkMismatch();
+
+    const {mutate: buyNow, isLoading: isBuyNowLoading, error: isError} = useBuyNow(contract);
+
+    const [bidAmount, setBidAmount] = useState("");
     const [minimumNextBid, setMinimumNextBid] = useState<{
         displayValue: string;
         symbol: string;
@@ -44,8 +53,55 @@ const ListingId = ({}) => {
         }
     }
 
-    const createBidOrOffer = async () => {
+    const buyNft = async () => {
+        if(networkMismatch) {
+            switchNetwork && switchNetwork(network);
+            return;
+        }
 
+        if(!listing || !contract || !listingId) return;
+
+        await buyNow({
+            id: listingId,
+            buyAmount: 1,
+            type: listing.type,
+        }, {
+            onSuccess: (data, variables, context) => {
+                alert("SUCCESS :))))");
+                console.log('SUCCESS >>>', data);
+                router.replace('/')
+            },
+            onError: (error, variables, context) => {
+                alert("ERROR, NFT could not be bought");
+                console.log(error);
+            }
+        });
+
+    }
+
+    const createBidOrOffer = async () => {
+        try {
+            if(networkMismatch) {
+                switchNetwork && switchNetwork(network);
+                return;
+            }
+
+            // Handle the direct listing
+            if(listing?.type === ListingType.Direct) {
+                if(listing.buyoutPrice.toString() === ethers.utils.parseEther(bidAmount).toString()) {
+                    console.log("Buyout price is equal to bid amount");
+                    await buyNft();
+                    return;
+                }
+            }
+
+            // Handle the auction listing
+            if(listing?.type === ListingType.Auction) {
+
+            }
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     if(isLoading) return (
@@ -87,7 +143,7 @@ const ListingId = ({}) => {
                         <p className="font-bold">Buy it Now Price:</p>
                         <p className="text-4xl font-bold">{listing.buyoutCurrencyValuePerToken.displayValue} {listing.buyoutCurrencyValuePerToken.symbol}</p>
 
-                        <button className="col-start-2 mt-2 bg-blue-600 font-bold text-white rounded-full w-44 py-4 px-10">
+                        <button onClick={buyNft} className="col-start-2 mt-2 bg-blue-600 font-bold text-white rounded-full w-44 py-4 px-10">
                             Buy Now
                         </button>
                     </div>
@@ -106,7 +162,7 @@ const ListingId = ({}) => {
                             </>
                         )}
 
-                        <input className="border p-2 rounded-lg mr-5 outline-green-500" type="text" placeholder={formatPlaceholder()}/>
+                        <input onChange={(e) => setBidAmount(e.target.value)} className="border p-2 rounded-lg mr-5 outline-green-500" type="text" placeholder={formatPlaceholder()}/>
                         <button onClick={createBidOrOffer} className="bg-red-600 font-bold text-white rounded-full w-44 py-4 px-10">{listing.type === ListingType.Direct ? "Offer" : "Bid"}</button>
                     </div>
 
