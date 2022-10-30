@@ -2,6 +2,7 @@ import React from 'react';
 import {useRouter} from "next/router";
 import Header from "../../components/Header";
 import {MediaRenderer, useContract, useListing} from "@thirdweb-dev/react";
+import {UserCircleIcon} from "@heroicons/react/solid";
 
 const ListingId = ({}) => {
     const router = useRouter();
@@ -32,9 +33,12 @@ const ListingId = ({}) => {
 
                 <section>
                     <div>
-                        <h1>{listing.asset.name}</h1>
+                        <h1 className="text-xl font-bold">{listing.asset.name}</h1>
                         <p>{listing?.asset?.description}</p>
-                        <p>{listing.sellerAddress}</p>
+                        <p className="flex items-center text-sm sm:text-base ">
+                            <UserCircleIcon className="h-5" />
+                            <span className="font-bold pr-1">Seller: </span>{listing.sellerAddress}
+                        </p>
                     </div>
                 </section>
             </main>
