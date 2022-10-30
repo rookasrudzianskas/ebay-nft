@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useRouter} from "next/router";
 import Header from "../../components/Header";
 import {MediaRenderer, useContract, useListing} from "@thirdweb-dev/react";
@@ -10,6 +10,10 @@ const ListingId = ({}) => {
     const {listingId} = router.query as { listingId: string };
     const { contract}  = useContract(process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT, 'marketplace');
     const {data: listing, isLoading, error } = useListing(contract, listingId);
+    const [minimumNextBid, setMinimumNextBid] = useState<{
+        displayValue: string;
+        symbol: string;
+    }>();
 
     const formatPlaceholder = () => {
         if(!listing) return;
