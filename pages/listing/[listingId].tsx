@@ -55,7 +55,13 @@ const ListingId = ({}) => {
                         </button>
                     </div>
 
+                    <div className="grid grid-cols-2 space-y-3 items-center justify-end">
+                        <hr className="col-span-2"/>
 
+                        <p className="col-span-2 font-bold">{listing.type === ListingType.Direct ? "Make an Offer" : "Bid on this Auction"}</p>
+
+
+                    </div>
 
                 </section>
             </main>
