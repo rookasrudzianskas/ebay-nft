@@ -44,6 +44,10 @@ const ListingId = ({}) => {
         }
     }
 
+    const createBidOrOffer = async () => {
+
+    }
+
     if(isLoading) return (
         <div>
             <Header />
@@ -103,7 +107,7 @@ const ListingId = ({}) => {
                         )}
 
                         <input className="border p-2 rounded-lg mr-5 outline-green-500" type="text" placeholder={formatPlaceholder()}/>
-                        <button className="bg-red-600 font-bold text-white rounded-full w-44 py-4 px-10">{listing.type === ListingType.Direct ? "Offer" : "Bid"}</button>
+                        <button onClick={createBidOrOffer} className="bg-red-600 font-bold text-white rounded-full w-44 py-4 px-10">{listing.type === ListingType.Direct ? "Offer" : "Bid"}</button>
                     </div>
 
                 </section>
