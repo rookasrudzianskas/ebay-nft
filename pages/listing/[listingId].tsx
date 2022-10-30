@@ -1,7 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import Header from "../../components/Header";
-import {MediaRenderer, useBuyNow, useContract, useListing, useNetwork, useNetworkMismatch} from "@thirdweb-dev/react";
+import {
+    MediaRenderer,
+    useBuyNow,
+    useContract,
+    useListing,
+    useMakeOffer,
+    useNetwork,
+    useNetworkMismatch
+} from "@thirdweb-dev/react";
 import {UserCircleIcon} from "@heroicons/react/solid";
 import {ListingType} from "@thirdweb-dev/sdk";
 import Countdown from "react-countdown";
@@ -18,6 +26,7 @@ const ListingId = ({}) => {
     const networkMismatch = useNetworkMismatch();
 
     const {mutate: buyNow, isLoading: isBuyNowLoading, error: isError} = useBuyNow(contract);
+    const {mutate: makeOffer } = useMakeOffer(contract);
 
     const [bidAmount, setBidAmount] = useState("");
     const [minimumNextBid, setMinimumNextBid] = useState<{
@@ -93,6 +102,22 @@ const ListingId = ({}) => {
                     await buyNft();
                     return;
                 }
+
+                console.log("Creating offer");
+                await makeOffer({
+                    quantity: 1,
+                    listingId: listingId,
+                    pricePerToken: bidAmount,
+                }, {
+                    onSuccess: (data, variables, context) => {
+                        alert("OFFER WAS MADE >>>");
+                        console.log('OFFER WAS MADE >>>', data);
+                    },
+                    onError: (error, variables, context) => {
+                        alert("ERROR, OFFER WAS NOT MADE");
+                        console.log(error);
+                    }
+                })
             }
 
             // Handle the auction listing
