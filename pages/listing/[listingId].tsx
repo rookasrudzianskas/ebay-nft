@@ -15,6 +15,8 @@ import {ListingType, NATIVE_TOKENS} from "@thirdweb-dev/sdk";
 import Countdown from "react-countdown";
 import network from "../../utils/network";
 import {ethers} from "ethers";
+import toast from "react-hot-toast"
+
 
 const ListingId = ({}) => {
     const router = useRouter();
@@ -68,6 +70,12 @@ const ListingId = ({}) => {
     }
 
     const buyNft = async () => {
+        if (!address) {
+            toast.error("Connect your wallet!")
+            return
+        }
+        const notification = toast.loading("Buying NFT...")
+
         if(networkMismatch) {
             switchNetwork && switchNetwork(network);
             return;
@@ -81,19 +89,29 @@ const ListingId = ({}) => {
             type: listing.type,
         }, {
             onSuccess: (data, variables, context) => {
-                alert("SUCCESS :))))");
-                console.log('SUCCESS >>>', data);
-                router.replace('/')
+                toast.success("NFT bought successfully!", {
+                    id: notification,
+                })
+                console.log("SUCCESS: ", data, variables, context)
+                router.replace("/");
             },
             onError: (error, variables, context) => {
-                alert("ERROR, NFT could not be bought");
-                console.log(error);
+                toast.error("Whoops something went wrong!", {
+                    id: notification,
+                })
+                console.log("ERROR: ", error, variables, context)
             }
         });
 
     }
 
     const createBidOrOffer = async () => {
+        if (!address) {
+            toast.error("Connect your wallet!")
+            return
+        }
+        const notification = toast.loading("Placing Bid... ")
+
         try {
             if(networkMismatch) {
                 switchNetwork && switchNetwork(network);
@@ -103,10 +121,17 @@ const ListingId = ({}) => {
             // Handle the direct listing
             if(listing?.type === ListingType.Direct) {
                 if(listing.buyoutPrice.toString() === ethers.utils.parseEther(bidAmount).toString()) {
-                    console.log("Buyout price is equal to bid amount");
-                    await buyNft();
+                    toast.loading("Buyout Price met, buying NFT...!", {
+                        id: notification,
+                    })
+                    console.log("Buyout Price met, buying NFT...")
+                    buyNft()
                     return;
                 }
+
+                toast.loading("Buyout price not met, making offer...!", {
+                    id: notification,
+                })
 
                 console.log("Buyout price not met, making offer...")
                 await makeOffer(
@@ -117,16 +142,16 @@ const ListingId = ({}) => {
                     },
                     {
                         onSuccess(data, variables, context) {
-                            // toast.success("Offer made successfully!", {
-                            //     id: notification,
-                            // })
+                            toast.success("Offer made successfully!", {
+                                id: notification,
+                            })
                             console.log("SUCCESS: ", data, variables, context)
-                            setBidAmount("");
+                            setBidAmount("")
                         },
                         onError(error, variables, context) {
-                            // toast.error("Whoops something went wrong!", {
-                            //     id: notification,
-                            // })
+                            toast.error("Whoops something went wrong!", {
+                                id: notification,
+                            })
                             console.log("ERROR: ", error, variables, context)
                         },
                     }
@@ -141,18 +166,18 @@ const ListingId = ({}) => {
                    bid: bidAmount,
                 }, {
                     onSuccess(data, variables, context) {
-                        // toast.success("Bid made successfully!", {
-                        //     id: notification,
-                        // })
+                        toast.success("Bid made successfully", {
+                            id: notification,
+                        })
                         console.log("SUCCESS: ", data, variables, context)
-                        setBidAmount("");
+                        setBidAmount("")
                     },
                     onError(error, variables, context) {
-                        // toast.error("Whoops something went wrong!", {
-                        //     id: notification,
-                        // })
+                        toast.error("Whoops something went wrong!", {
+                            id: notification,
+                        })
                         console.log("ERROR: ", error, variables, context)
-                    }
+                    },
                 });
             }
         } catch (e) {
@@ -232,17 +257,23 @@ const ListingId = ({}) => {
                                             <button
                                                 // @ts-ignore
                                                 onClick={() => {
+                                                    if (!address) {
+                                                        toast.error("Connect your wallet!")
+                                                        return
+                                                    }
+                                                    const notification =
+                                                        toast.loading("Placing Offer... ")
                                                     acceptOffer({
                                                         listingId,
                                                         addressOfOfferor: offer.offeror,
                                                     }, {
                                                         onSuccess(data, variables, context) {
-                                                            // toast.success(
-                                                            //     "Offer accepted successfully",
-                                                            //     {
-                                                            //         id: notification,
-                                                            //     }
-                                                            // )
+                                                            toast.success(
+                                                                "Offer accepted successfully",
+                                                                {
+                                                                    id: notification,
+                                                                }
+                                                            )
                                                             console.log(
                                                                 "SUCCESS: ",
                                                                 data,
@@ -252,12 +283,12 @@ const ListingId = ({}) => {
                                                             router.replace("/")
                                                         },
                                                         onError(error, variables, context) {
-                                                            // toast.error(
-                                                            //     "Whoops something went wrong!",
-                                                            //     {
-                                                            //         id: notification,
-                                                            //     }
-                                                            // )
+                                                            toast.error(
+                                                                "Whoops something went wrong!",
+                                                                {
+                                                                    id: notification,
+                                                                }
+                                                            )
 
                                                             console.log(
                                                                 "ERROR: ",
