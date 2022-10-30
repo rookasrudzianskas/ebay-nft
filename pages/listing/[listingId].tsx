@@ -19,6 +19,7 @@ const ListingId = ({}) => {
 
         if(listing.type === ListingType.Auction) {
             return 'Enter Bid Amount'
+            // @FIXME import the auction contract and get the current highest bid
         }
     }
 
@@ -70,6 +71,15 @@ const ListingId = ({}) => {
                         <hr className="col-span-2"/>
 
                         <p className="col-span-2 font-bold">{listing.type === ListingType.Direct ? "Make an Offer" : "Bid on this Auction"}</p>
+
+                        {listing.type === ListingType.Auction && (
+                            <>
+                                <p>Current Minimum Bid:</p>
+                                <p>...</p>
+                                <p>Time Remaining:</p>
+                                <p>...</p>
+                            </>
+                        )}
 
                         <input className="border p-2 rounded-lg mr-5 outline-green-500" type="text" placeholder={formatPlaceholder()}/>
                         <button className="bg-red-600 font-bold text-white rounded-full w-44 py-4 px-10">{listing.type === ListingType.Direct ? "Offer" : "Bid"}</button>
