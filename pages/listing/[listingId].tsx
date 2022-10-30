@@ -3,6 +3,7 @@ import {useRouter} from "next/router";
 import Header from "../../components/Header";
 import {MediaRenderer, useContract, useListing} from "@thirdweb-dev/react";
 import {UserCircleIcon} from "@heroicons/react/solid";
+import {ListingType} from "@thirdweb-dev/sdk";
 
 const ListingId = ({}) => {
     const router = useRouter();
@@ -31,15 +32,31 @@ const ListingId = ({}) => {
                     <MediaRenderer src={listing.asset.image} />
                 </div>
 
-                <section>
+                <section className="flex-1 space-y-5 pb-20 lg:pb-0">
                     <div>
                         <h1 className="text-xl font-bold">{listing.asset.name}</h1>
-                        <p>{listing?.asset?.description}</p>
+                        <p className="text-gray-600">{listing?.asset?.description}</p>
                         <p className="flex items-center text-sm sm:text-base ">
                             <UserCircleIcon className="h-5" />
                             <span className="font-bold pr-1">Seller: </span>{listing.sellerAddress}
                         </p>
                     </div>
+
+                    <div className="grid grid-cols-2 items-center py-2">
+                        <p className="font-bold">
+                            Listing Type:
+                        </p>
+                        <p className="">{listing.type === ListingType.Direct ? "Direct" : "Auction"}</p>
+                        <p className="font-bold">Buy it Now Price:</p>
+                        <p className="text-4xl font-bold">{listing.buyoutCurrencyValuePerToken.displayValue} {listing.buyoutCurrencyValuePerToken.symbol}</p>
+
+                        <button className="col-start-2 mt-2 bg-blue-600 font-bold text-white rounded-full w-44 py-4 px-10">
+                            Buy Now
+                        </button>
+                    </div>
+
+
+
                 </section>
             </main>
         </div>
