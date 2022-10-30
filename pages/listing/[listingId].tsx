@@ -5,10 +5,10 @@ import {
     MediaRenderer,
     useBuyNow,
     useContract,
-    useListing,
+    useListing, useMakeBid,
     useMakeOffer,
     useNetwork,
-    useNetworkMismatch
+    useNetworkMismatch, useOffers
 } from "@thirdweb-dev/react";
 import {UserCircleIcon} from "@heroicons/react/solid";
 import {ListingType} from "@thirdweb-dev/sdk";
@@ -27,6 +27,11 @@ const ListingId = ({}) => {
 
     const {mutate: buyNow, isLoading: isBuyNowLoading, error: isError} = useBuyNow(contract);
     const {mutate: makeOffer } = useMakeOffer(contract);
+    const { data: offers } = useOffers(contract, listingId);
+    const { mutate: makeBid } = useMakeBid(contract);
+
+
+    console.log(offers);
 
     const [bidAmount, setBidAmount] = useState("");
     const [minimumNextBid, setMinimumNextBid] = useState<{
@@ -103,26 +108,52 @@ const ListingId = ({}) => {
                     return;
                 }
 
-                console.log("Creating offer");
-                await makeOffer({
-                    quantity: 1,
-                    listingId: listingId,
-                    pricePerToken: bidAmount,
-                }, {
-                    onSuccess: (data, variables, context) => {
-                        alert("OFFER WAS MADE >>>");
-                        console.log('OFFER WAS MADE >>>', data);
+                console.log("Buyout price not met, making offer...")
+                await makeOffer(
+                    {
+                        quantity: 1,
+                        listingId,
+                        pricePerToken: bidAmount,
                     },
-                    onError: (error, variables, context) => {
-                        alert("ERROR, OFFER WAS NOT MADE");
-                        console.log(error);
+                    {
+                        onSuccess(data, variables, context) {
+                            // toast.success("Offer made successfully!", {
+                            //     id: notification,
+                            // })
+                            console.log("SUCCESS: ", data, variables, context)
+                            setBidAmount("");
+                        },
+                        onError(error, variables, context) {
+                            // toast.error("Whoops something went wrong!", {
+                            //     id: notification,
+                            // })
+                            console.log("ERROR: ", error, variables, context)
+                        },
                     }
-                })
+                )
             }
 
             // Handle the auction listing
             if(listing?.type === ListingType.Auction) {
-
+                console.log("Making bid...");
+                await makeBid({
+                   listingId,
+                   bid: bidAmount,
+                }, {
+                    onSuccess(data, variables, context) {
+                        // toast.success("Bid made successfully!", {
+                        //     id: notification,
+                        // })
+                        console.log("SUCCESS: ", data, variables, context)
+                        setBidAmount("");
+                    },
+                    onError(error, variables, context) {
+                        // toast.error("Whoops something went wrong!", {
+                        //     id: notification,
+                        // })
+                        console.log("ERROR: ", error, variables, context)
+                    }
+                });
             }
         } catch (e) {
             console.log(e);
